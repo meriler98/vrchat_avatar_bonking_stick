@@ -381,8 +381,9 @@ namespace Nivera.VRC.Avatars.BonkStick
 
             AddTriggeringLayer(animatorFx);
             AddBonkingLayer(animatorFx);
+
             if(settings.IsBatActivatable)
-                AddBonkingActivationLayer(animatorFx);
+                AddBonkingActivationLayer(animatorFx, descriptor.GetComponent<Animator>(), settings);
 
             animatorFx.MarkDirty();
             AssetDatabase.SaveAssets();
@@ -392,9 +393,18 @@ namespace Nivera.VRC.Avatars.BonkStick
         {
             var controller = GetCustomBaseLayerAnimator(descriptor, VRCAvatarDescriptor.AnimLayerType.FX);
             
+            // TODO: Remove quest specific animations
+            
             VRCUtilities.RemoveLayersByName(controller, 
                 Constants.LayerBonkTrigger, Constants.LayerBonk, Constants.LayerActivation);
             
+            var assetPath = AssetDatabase.GetAssetPath(controller);
+            var objects = AssetDatabase.LoadAllAssetRepresentationsAtPath(assetPath);
+            objects.Where(x => x is AnimationClip && (x.name == Constants.AnimBatOn ||
+                                                      x.name == Constants.AnimBatOff))
+                .ToList().ForEach(AssetDatabase.RemoveObjectFromAsset);
+            controller.MarkDirty();
+
             RemoveParameters(controller);
         }
 
@@ -516,15 +526,22 @@ namespace Nivera.VRC.Avatars.BonkStick
             controller.AddLayer(layer);
         }
         
-        private static void AddBonkingActivationLayer(AnimatorController controller)
+        private static void AddBonkingActivationLayer(AnimatorController controller, Animator animator, Settings settings)
         {
             var layer = VRCUtilities.CreateDefaultAnimatorLayer(Constants.LayerActivation);
             var stateMachine = layer.stateMachine;
-            
+
             controller.AddObjectAsset(stateMachine);
             
             var onClip = Resources.Load($"Animations/{Constants.AnimBatOn}") as AnimationClip;
             var offClip = Resources.Load($"Animations/{Constants.AnimBatOff}") as AnimationClip;
+            
+            // Clips override for quest
+            if (settings.IsQuest && animator != null)
+            {
+                onClip = GenerateToggleAnimation(animator, controller, true, settings.UseRightHand);
+                offClip = GenerateToggleAnimation(animator, controller, false, settings.UseRightHand);
+            }
             
             // Create states
             var offState = VRCUtilities.CreateDefaultState(stateMachine, "OFF", new Vector3(200f, 0f), offClip);
@@ -543,6 +560,27 @@ namespace Nivera.VRC.Avatars.BonkStick
             stateMachine.defaultState = offState;
             
             controller.AddLayer(layer);
+        }
+
+        private static AnimationClip GenerateToggleAnimation(Animator animator, AnimatorController controller,
+            bool state, bool rightSide)
+        {
+            var clip = new AnimationClip();
+            var curve = new AnimationCurve();
+            
+            var hand = rightSide
+                ? animator.GetBoneTransform(HumanBodyBones.RightHand)
+                : animator.GetBoneTransform(HumanBodyBones.LeftHand);
+
+            var path = AnimationUtility.CalculateTransformPath(hand, animator.transform) + $"/{Constants.ObjectBonkingBat}";
+
+            curve.AddKey(0f, state ? 1f : 0f);
+            clip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
+            clip.name = state ? Constants.AnimBatOn : Constants.AnimBatOff;
+
+            controller.AddObjectAsset(clip);
+            
+            return clip;
         }
 
         #endregion
