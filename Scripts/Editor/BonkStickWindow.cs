@@ -65,7 +65,9 @@ namespace Nivera.VRC.Avatars.BonkStick
 
         private void OnGUI()
         {
-            var animator = _descriptor?.GetComponent<Animator>();
+            Animator animator = null;
+            if(_descriptor != null)
+                animator = _descriptor?.GetComponent<Animator>();
             
             EditorGUILayout.HelpBox($"You can readjust position of the bat after installing by deactivating " +
                                     $"parent constraint on object {Constants.ObjectBonkingBat}, moving and reactivating it(with \"Activate\" button)",
@@ -93,8 +95,8 @@ namespace Nivera.VRC.Avatars.BonkStick
                         "If unchecked left hand will be used to hold the bat"), _isUseRightHand);
             EditorGUI.EndDisabledGroup();
 
-            
-            DrawValidationHelpBoxes(animator);
+            if(animator != null)
+                DrawValidationHelpBoxes(animator);
             
             // Install button
 
@@ -134,6 +136,7 @@ namespace Nivera.VRC.Avatars.BonkStick
             MenuInstaller.Remove(_descriptor);
             AnimationsInstaller.Remove(_descriptor);
             GameObjectInstaller.Remove(_descriptor);
+            AssetDatabase.SaveAssets();
         }
 
         private void DrawValidationHelpBoxes(Animator animator)
