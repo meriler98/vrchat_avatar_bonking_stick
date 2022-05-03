@@ -2,6 +2,9 @@
 This is an asset created to add bonking stick to your avatar and have fun bonking people around
 (Image with bonking to put)
 
+# Requirements
+- VRCSDK3 Avatar 2022.04.21.03.29 or later
+
 # Installation
 1. Import the package into unity  
 2. Go to the menu(Tools -> Nivera -> Bonking Stick Setup)  
