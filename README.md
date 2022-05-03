@@ -1,3 +1,8 @@
+[![Generic badge](https://img.shields.io/badge/Unity-2019.4.31f1-informational.svg)](https://unity3d.com/unity/whats-new/2019.4.31)
+[![Generic badge](https://img.shields.io/badge/SDK-AvatarSDK3-informational.svg)](https://vrchat.com/home/download)
+[![Generic badge](https://img.shields.io/badge/License-MIT-informational.svg)](https://github.com/meriler98/vrchat_avatar_bonking_stick/blob/main/LICENSE)
+[![Generic badge](https://img.shields.io/github/downloads/meriler98/vrchat_avatar_bonking_stick/total?label=Downloads)](https://github.com/meriler98/vrchat_avatar_bonking_stick/releases/latest)
+
 # Summary
 This is an asset created to add bonking stick to your avatar and have fun bonking people around
 (Image with bonking to put)
