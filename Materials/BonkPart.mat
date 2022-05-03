@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: BonkPart
-  m_Shader: {fileID: 4800000, guid: 9200bec112b65ec4fbbbd33fa89c20f4, type: 3}
+  m_Shader: {fileID: 4800000, guid: 8b39b95ac85682040beff730e0cfc77a, type: 3}
   m_ShaderKeywords: _ALPHABLEND_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
