@@ -197,11 +197,14 @@ namespace Nivera.VRC.Avatars.BonkStick
 
         public bool UseRightHand { get; } = true;
 
-        public Settings(bool isBatActivatable, bool isUpdateGameObject, bool useRightHand)
+        public bool IsQuest { get; } = false;
+
+        public Settings(bool isBatActivatable, bool isUpdateGameObject, bool useRightHand, bool isQuest)
         {
             IsBatActivatable = isBatActivatable;
             IsUpdateGameObject = isUpdateGameObject;
             UseRightHand = useRightHand;
+            IsQuest = isQuest;
         }
 
         public Settings() { }
@@ -598,11 +601,13 @@ namespace Nivera.VRC.Avatars.BonkStick
         public static void Install(VRCAvatarDescriptor descriptor, Settings settings)
         {
             if(!settings.IsUpdateGameObject) return;
-            
+
             // Cleanup previous one
             Remove(descriptor);
-
-            var prefab = Resources.Load<GameObject>(Constants.ObjectBonkingBat);
+            
+            var prefab = settings.IsQuest ? 
+                Resources.Load<GameObject>(Constants.ObjectBonkingBat):
+                Resources.Load<GameObject>(Constants.ObjectBonkingBat + "_quest");
 
             var animator = descriptor.GetComponent<Animator>();
             if (animator == null)
@@ -627,6 +632,16 @@ namespace Nivera.VRC.Avatars.BonkStick
             var instance = Object.Instantiate(prefab, descriptor.transform);
             instance.name = Constants.ObjectBonkingBat;
 
+            
+            // Finalization for quest and ignoring of parent constraint
+            if (settings.IsQuest)
+            {
+                instance.transform.parent = handTransform;
+                instance.transform.position = pos;
+                instance.transform.rotation = rot;
+                return;
+            };
+            
             var parConstr = instance.GetComponent<ParentConstraint>();
             
             // Quit setting up parent constraint cause we are not humanoid

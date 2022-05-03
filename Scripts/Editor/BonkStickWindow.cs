@@ -39,8 +39,9 @@ namespace Nivera.VRC.Avatars.BonkStick
         private bool _isSetupBatActivation = true;
         private bool _isUpdateGameObject = true;
         private bool _isUseRightHand = true;
+        private bool _isQuest = false;
 
-        private Settings Settings => new Settings(_isSetupBatActivation, _isUpdateGameObject, _isUseRightHand);
+        private Settings Settings => new Settings(_isSetupBatActivation, _isUpdateGameObject, _isUseRightHand, _isQuest);
 
         [MenuItem("Tools/Nivera/Bonking Stick Setup")]
         private static void ShowWindow()
@@ -48,6 +49,18 @@ namespace Nivera.VRC.Avatars.BonkStick
             var window = GetWindow<BonkStickWindow>();
             window.titleContent = new GUIContent("Bonking Stick Setup");
             window.Show();
+        }
+
+        private void CreateGUI()
+        {
+            foreach (var descriptor in FindObjectsOfType<VRCAvatarDescriptor>())
+            {
+                if (descriptor.gameObject.activeSelf)
+                {
+                    _descriptor = descriptor;
+                    break;
+                }
+            }
         }
 
         private void OnGUI()
@@ -69,6 +82,10 @@ namespace Nivera.VRC.Avatars.BonkStick
             _isUpdateGameObject =
                 EditorGUILayout.Toggle(new GUIContent("Reinstall game object?", 
                     "Do you want object and it's settings to be reset as well?"), _isUpdateGameObject);
+            
+            _isQuest =
+                EditorGUILayout.Toggle(new GUIContent("Install Quest version", 
+                    "Install quest compatible version?"), _isQuest);
 
             EditorGUI.BeginDisabledGroup(animator == null || !animator.isHuman);
             _isUseRightHand =
