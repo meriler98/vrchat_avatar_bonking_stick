@@ -637,7 +637,7 @@ namespace Nivera.VRC.Avatars.BonkStick
             if (settings.IsQuest)
             {
                 instance.transform.parent = handTransform;
-                instance.transform.position = pos;
+                instance.transform.localPosition = pos;
                 instance.transform.rotation = rot;
                 return;
             };
@@ -661,9 +661,26 @@ namespace Nivera.VRC.Avatars.BonkStick
 
         public static void Remove(VRCAvatarDescriptor descriptor)
         {
-            var transform = descriptor.transform.Find(Constants.ObjectBonkingBat);
-            if(transform != null)
-                Object.DestroyImmediate(transform.gameObject);
+            var removeList = new List<Transform>();
+
+            removeList.Add(descriptor.transform.Find(Constants.ObjectBonkingBat));
+
+            var animator = descriptor.GetComponent<Animator>();
+            if (animator != null && animator.isHuman)
+            {
+                removeList.Add(
+                    animator.GetBoneTransform(HumanBodyBones.LeftHand).Find(Constants.ObjectBonkingBat)
+                    );
+                removeList.Add(
+                    animator.GetBoneTransform(HumanBodyBones.RightHand).Find(Constants.ObjectBonkingBat)
+                );
+            }
+
+            removeList.ForEach(x =>
+            {
+                if(x != null)
+                    Object.DestroyImmediate(x.gameObject);
+            });
         }
     }
 }
