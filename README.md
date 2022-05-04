@@ -34,3 +34,10 @@ In order to edit position of your bonking bat you need:
 ![Step 5](https://raw.githubusercontent.com/meriler98/vrchat_avatar_bonking_stick/main/Images/Position_editting_Step_5.png)  
 6. Deactivate game object to avoid it from appearing on avatar's appearence  
 ![Step 6](https://raw.githubusercontent.com/meriler98/vrchat_avatar_bonking_stick/main/Images/Position_editting_Step_6.png)  
+  
+# Changelog  
+
+- 1.1  
+> Added auto selection of first avatar in descriptor  
+> Added quest support option  
+> Updated material for bonk particle that works better in vrchat  
